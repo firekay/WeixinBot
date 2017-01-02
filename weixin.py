@@ -19,6 +19,7 @@ import httplib
 from collections import defaultdict
 from urlparse import urlparse
 from lxml import html
+import traceback
 #import pdb
 
 # for media upload
@@ -964,35 +965,43 @@ class WebWeixin(object):
             listenProcess = multiprocessing.Process(target=self.listenMsgMode)
             listenProcess.start()
 
+        split_name_msg = '-'
         while True:
-            text = raw_input('')
-            if text == 'quit':
-                listenProcess.terminate()
-                print('[*] 退出微信')
-                logging.debug('[*] 退出微信')
-                exit()
-            elif text[:2] == '->':
-                [name, word] = text[2:].split(':')
-                if name == 'all':
-                    self.sendMsgToAll(word)
-                else:
-                    self.sendMsg(name, word)
-            elif text[:3] == 'm->':
-                [name, file] = text[3:].split(':')
-                self.sendMsg(name, file, True)
-            elif text[:3] == 'f->':
-                print '发送文件'
-                logging.debug('发送文件')
-            elif text[:3] == 'i->':
-                print '发送图片'
-                [name, file_name] = text[3:].split(':')
-                self.sendImg(name, file_name)
-                logging.debug('发送图片')
-            elif text[:3] == 'e->':
-                print '发送表情'
-                [name, file_name] = text[3:].split(':')
-                self.sendEmotion(name, file_name)
-                logging.debug('发送表情')
+            try:
+                text = raw_input('')
+                if text == 'quit':
+                    listenProcess.terminate()
+                    print('[*] 退出微信')
+                    logging.debug('[*] 退出微信')
+                    exit()
+                elif text[:1] == '-':
+                    [name, word] = text[1:].split(split_name_msg)
+                    # [name, word] = re.split(split_name_msg, text[1:])
+                    if name == 'all':
+                        self.sendMsgToAll(word)
+                    else:
+                        self.sendMsg(name, word)
+                elif text[:2] == 'm-':
+                    [name, file] = text[3:].split(split_name_msg)
+                    self.sendMsg(name, file, True)
+                elif text[:3] == 'f->':
+                    print '发送文件'
+                    logging.debug('发送文件')
+                elif text[:3] == 'i->':
+                    print '发送图片'
+                    # [name, file_name] = text[3:].split(':')
+                    [name, file_name] = text[3:].split(split_name_msg)
+                    self.sendMsg(name, file, True)
+                    self.sendImg(name, file_name)
+                    logging.debug('发送图片')
+                elif text[:3] == 'e->':
+                    print '发送表情'
+                    [name, file_name] = text[3:].split(split_name_msg)
+                    # [name, file_name] = text[3:].split(':')
+                    self.sendEmotion(name, file_name)
+                    logging.debug('发送表情')
+            except Exception:
+                traceback.print_exc()
 
     def _safe_open(self, path):
         if self.autoOpen:
@@ -1153,7 +1162,7 @@ if __name__ == '__main__':
     logger = logging.getLogger(__name__)
     if not sys.platform.startswith('win'):
         import coloredlogs
-        coloredlogs.install(level='DEBUG')
+        coloredlogs.install(level='WARN')
 
     webwx = WebWeixin()
     webwx.start()

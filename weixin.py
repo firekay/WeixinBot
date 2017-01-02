@@ -982,21 +982,20 @@ class WebWeixin(object):
                     else:
                         self.sendMsg(name, word)
                 elif text[:2] == 'm-':
-                    [name, file] = text[3:].split(split_name_msg)
+                    [name, file] = text[2:].split(split_name_msg)
                     self.sendMsg(name, file, True)
-                elif text[:3] == 'f-':
+                elif text[:2] == 'f-':
                     print '发送文件'
                     logging.debug('发送文件')
-                elif text[:3] == 'i-':
+                elif text[:2] == 'i-':
                     print '发送图片'
                     # [name, file_name] = text[3:].split(':')
-                    [name, file_name] = text[3:].split(split_name_msg)
-                    self.sendMsg(name, file, True)
+                    [name, file_name] = text[2:].split(split_name_msg)
                     self.sendImg(name, file_name)
                     logging.debug('发送图片')
-                elif text[:3] == 'e-':
+                elif text[:2] == 'e-':
                     print '发送表情'
-                    [name, file_name] = text[3:].split(split_name_msg)
+                    [name, file_name] = text[2:].split(split_name_msg)
                     # [name, file_name] = text[3:].split(':')
                     self.sendEmotion(name, file_name)
                     logging.debug('发送表情')
@@ -1012,6 +1011,8 @@ class WebWeixin(object):
                             'RemarkName'] else contact['NickName']
                         id = contact['UserName']
                         print("id: {}, name: {}".format(id, name))
+                else:
+                    print('[******输入错误]，请以-, m-, f-, i-, e-, ggs, gcs开头.')
 
             except Exception:
                 traceback.print_exc()

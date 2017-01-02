@@ -878,14 +878,14 @@ class WebWeixin(object):
                         time.sleep(1)
             else:
                 if self.webwxsendmsg(word, id):
-                    print '[*] 消息发送成功'
-                    logging.debug('[*] 消息发送成功')
+                    print '[***] 消息发送成功'
+                    logging.debug('[***] 消息发送成功')
                 else:
-                    print '[*] 消息发送失败'
-                    logging.debug('[*] 消息发送失败')
+                    print '[**********] 消息发送失败'
+                    logging.debug('[**********] 消息发送失败')
         else:
-            print '[*] 此用户不存在'
-            logging.debug('[*] 此用户不存在')
+            print '[******] 此用户不存在'
+            logging.debug('[******] 此用户不存在')
 
     def sendMsgToAll(self, word):
         for contact in self.ContactList:
@@ -984,22 +984,35 @@ class WebWeixin(object):
                 elif text[:2] == 'm-':
                     [name, file] = text[3:].split(split_name_msg)
                     self.sendMsg(name, file, True)
-                elif text[:3] == 'f->':
+                elif text[:3] == 'f-':
                     print '发送文件'
                     logging.debug('发送文件')
-                elif text[:3] == 'i->':
+                elif text[:3] == 'i-':
                     print '发送图片'
                     # [name, file_name] = text[3:].split(':')
                     [name, file_name] = text[3:].split(split_name_msg)
                     self.sendMsg(name, file, True)
                     self.sendImg(name, file_name)
                     logging.debug('发送图片')
-                elif text[:3] == 'e->':
+                elif text[:3] == 'e-':
                     print '发送表情'
                     [name, file_name] = text[3:].split(split_name_msg)
                     # [name, file_name] = text[3:].split(':')
                     self.sendEmotion(name, file_name)
                     logging.debug('发送表情')
+                elif text == 'ggs':
+                    for group in self.GroupList:
+                        name = group['RemarkName'] if group[
+                            'RemarkName'] else group['NickName']
+                        id = group['UserName']
+                        print("id: {}, name: {}".format(id, name))
+                elif text == 'gcs':
+                    for contact in self.ContactList:
+                        name = contact['RemarkName'] if contact[
+                            'RemarkName'] else contact['NickName']
+                        id = contact['UserName']
+                        print("id: {}, name: {}".format(id, name))
+
             except Exception:
                 traceback.print_exc()
 
